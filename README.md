@@ -76,6 +76,8 @@ The architecture doc supersedes the sprawling pipeline description that used to 
 
 **Using Codex CLI?** Install the sibling distribution instead: [`Imbad0202/academic-research-skills-codex`](https://github.com/Imbad0202/academic-research-skills-codex) — same workflow content, Codex-native packaging as a single `$academic-research-suite` skill with `ars-*` aliases.
 
+**Using Google Antigravity (AGY)?** This repository serves as the native AGY-adapted distribution (`agy-port`). It configures standard AGY `plugin.json`, `AGENTS.md` meta-skill routing, and independent Subagent definitions for blind peer reviews and integrity audits. Open directly in AGY or link into `~/.gemini/config/plugins/` for global availability.
+
 **Third-party platforms and integrations** that wrap or host ARS are listed in [THIRD_PARTY.md](THIRD_PARTY.md) — community-submitted and not reviewed or endorsed by the maintainer.
 
 **Governance:** who decides, what cross-model review does and does not provide, and the project's end-of-life posture are stated in [GOVERNANCE.md](GOVERNANCE.md); security reporting and triage in [SECURITY.md](SECURITY.md).

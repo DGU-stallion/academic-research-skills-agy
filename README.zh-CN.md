@@ -71,6 +71,8 @@ v3.3 的灵感来自 [**PaperOrchestra**](https://arxiv.org/abs/2604.05018)（So
 
 **用 Codex CLI？** 请安装姐妹版：[`Imbad0202/academic-research-skills-codex`](https://github.com/Imbad0202/academic-research-skills-codex)。同一套 workflow 内容，Codex 原生打包为单一 `$academic-research-suite` skill，提供 `ars-*` 别名。
 
+**用 Google Antigravity (AGY)？** 本仓库即为 AGY 原生适配发行版（`agy-port`）。配置了符合 AGY 规范的 `plugin.json`、`AGENTS.md` 元技能规范及 Subagents 独立审查架构。可直接在 AGY 中打开本工作区或软链至 `~/.gemini/config/plugins/` 全局使用。
+
 ## 性能与费用
 
 **👉 [docs/PERFORMANCE.md](docs/PERFORMANCE.md)** — 各模式 token 预算、完整 pipeline 估算（一篇 15k 字论文约 ~$4–6），以及建议的 Claude Code 设置（Auto 模式；Agent Team 选用）。
