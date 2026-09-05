@@ -1,0 +1,23 @@
+{
+  "name": "academic-research-skills",
+  "version": "3.21.1-agy",
+  "description": "Comprehensive academic research, manuscript drafting, peer review, and integrity verification copilot for Antigravity (AGY).",
+  "author": {
+    "name": "Cheng-I Wu / AGY Port by PaperPilot",
+    "url": "https://github.com/DGU-stallion/academic-research-skills-agy"
+  },
+  "repository": "https://github.com/DGU-stallion/academic-research-skills-agy",
+  "license": "CC-BY-NC-4.0",
+  "keywords": [
+    "academic",
+    "research",
+    "writing",
+    "peer-review",
+    "deep-research",
+    "literature-review",
+    "systematic-review",
+    "scholarly-publishing",
+    "antigravity",
+    "agy"
+  ]
+}
