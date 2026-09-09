@@ -21,6 +21,7 @@ venv/
 ROADMAP.md
 
 # Local tooling scratch directory (not part of the project)
+.vscode/
 .gstack/
 .coverage
 .coverage.*
