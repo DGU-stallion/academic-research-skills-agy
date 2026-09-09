@@ -8,6 +8,7 @@ editorial decision.
 from __future__ import annotations
 
 import argparse
+import errno
 import hashlib
 import json
 import os
@@ -73,6 +74,11 @@ def _open_nofollow(path: Path) -> int:
             components[-1], os.O_RDONLY | nofollow, dir_fd=directory_fd
         )
     except OSError as exc:
+        if exc.errno == errno.EPERM:
+            for p in (path, *list(path.parents)[:-1]):
+                if p.is_symlink():
+                    raise ScoreError(f"cannot traverse explicit input without symlinks {path}: symlink component detected")
+            return os.open(str(path), os.O_RDONLY | nofollow)
         raise ScoreError(
             f"cannot traverse explicit input without symlinks {path}: {exc}"
         ) from exc

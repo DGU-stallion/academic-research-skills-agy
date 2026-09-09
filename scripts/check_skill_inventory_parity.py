@@ -295,27 +295,31 @@ def run_all_checks(root: Path) -> list[str]:
     symlinked = _skills_dir_entries(root, violations)
     _report_set_diff(on_disk, symlinked, f"{SKILLS_DIR}/ symlinks", violations)
 
-    table = _claude_table_rows(root, violations)
-    _report_set_diff(
-        on_disk, table, f"{CLAUDE_MD} Skills Overview table", violations
-    )
-
-    manifest, market_descriptions = _marketplace_skills(root, violations)
-    _report_set_diff(
-        on_disk, manifest, f"{MARKETPLACE_JSON} plugins[].skills", violations
-    )
-    for description in market_descriptions:
-        _check_count_claim(
-            f"{MARKETPLACE_JSON} description", description, len(on_disk), violations
+    if (root / ".claude").exists():
+        table = _claude_table_rows(root, violations)
+        _report_set_diff(
+            on_disk, table, f"{CLAUDE_MD} Skills Overview table", violations
         )
 
-    plugin = _load_json(root / PLUGIN_JSON, violations)
-    if plugin is not None:
-        description = plugin.get("description")
-        if isinstance(description, str):
+    if (root / ".claude-plugin").exists():
+        manifest, market_descriptions = _marketplace_skills(root, violations)
+        _report_set_diff(
+            on_disk, manifest, f"{MARKETPLACE_JSON} plugins[].skills", violations
+        )
+        for description in market_descriptions:
             _check_count_claim(
-                f"{PLUGIN_JSON} description", description, len(on_disk), violations
+                f"{MARKETPLACE_JSON} description", description, len(on_disk), violations
             )
+
+    plugin_path = root / PLUGIN_JSON if (root / ".claude-plugin").exists() else root / "plugin.json"
+    if (root / ".claude-plugin").exists() or (root / "plugin.json").is_file():
+        plugin = _load_json(plugin_path, violations)
+        if plugin is not None:
+            description = plugin.get("description")
+            if isinstance(description, str):
+                _check_count_claim(
+                    f"{PLUGIN_JSON} description", description, len(on_disk), violations
+                )
 
     registry = root / MODE_REGISTRY_MD
     if registry.is_file():

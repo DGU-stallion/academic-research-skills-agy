@@ -4,6 +4,7 @@ from __future__ import annotations
 import copy
 import hashlib
 import json
+import os
 import subprocess
 import sys
 import unicodedata
@@ -2512,7 +2513,7 @@ def test_scan_output_cannot_alias_any_named_input(
         output = manifest
     else:
         output = tmp_path / "snapshot-hardlink.json"
-        output.hardlink_to(snapshot)
+        os.link(snapshot, output)
     snapshot_before = snapshot.read_bytes()
     manifest_before = manifest.read_bytes()
     result = subprocess.run(

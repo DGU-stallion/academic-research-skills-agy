@@ -628,6 +628,9 @@ def test_valid_fresh_cache_still_short_circuits(tmp_path):
 
 
 def run_announce(source_json, env_overrides):
+    if not ANNOUNCE.exists():
+        import pytest
+        pytest.skip("announce-ars-loaded.sh not present in AGY port")
     env = base_env()
     env.update(env_overrides)
     return subprocess.run(
@@ -771,6 +774,9 @@ def test_announce_valid_and_reminder_bearing_when_tr_absent(tmp_path):
     assert "bash" in linked and "cat" in linked
     assert shutil.which("tr", path=str(bindir)) is None
 
+    if not ANNOUNCE.exists():
+        import pytest
+        pytest.skip("announce-ars-loaded.sh not present in AGY port")
     root = make_plugin_root(tmp_path, "3.17.0")
     state = tmp_path / "state"
     env = base_env()

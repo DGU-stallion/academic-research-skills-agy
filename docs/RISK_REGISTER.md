@@ -161,7 +161,7 @@ A user installs through a channel where documented enforcement never runs.
 
 - **Existing controls**: the per-channel availability matrix
   (`docs/CONTROL_AVAILABILITY.md`); the write-scope guard's disclosed degrade posture
-  (`hooks/run_guard.sh`), indexed as five `write_scope_guard_*` rows in the
+  (`scripts/ars_write_scope_guard.py`), indexed as five `write_scope_guard_*` rows in the
   degradation registry (`shared/contracts/degradation_registry.json`,
   [#769](https://github.com/Imbad0202/academic-research-skills/issues/769));
   per-channel notes in `docs/SETUP.md`.

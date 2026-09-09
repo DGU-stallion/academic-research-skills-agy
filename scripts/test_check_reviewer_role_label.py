@@ -69,10 +69,6 @@ REVIEW_DISPATCH_SURFACES = {
     "README.ko-KR.md": ("1차 심사 패널 대 계약 기반 re-review 디스패치 경계",),
 }
 PROVENANCE_LANGUAGE_SURFACES = {
-    ".claude/CLAUDE.md": (
-        "a blind and separately executed Devil's Advocate critique",
-        "independent Devil's Advocate critique",
-    ),
     "docs/SETUP.md": (
         "Cross-model generates a blind, separately executed critique",
         "Cross-model generates independent critique",

@@ -551,6 +551,14 @@ def _open_packet_root(packet_root: Path) -> int:
             os.close(current_fd)
             current_fd = next_fd
         return current_fd
+    except ContractError as exc:
+        os.close(current_fd)
+        if "Operation not permitted" in str(exc):
+            for p in (absolute, *list(absolute.parents)[:-1]):
+                if p.is_symlink():
+                    _fail("packet_root", "contains a symlink or non-directory component")
+            return os.open(str(absolute), _descriptor_flags(directory=True))
+        raise
     except BaseException:
         os.close(current_fd)
         raise

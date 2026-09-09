@@ -1337,7 +1337,7 @@ def _preflight_draft_role_matrix(
                 preregistration_id=sidecar["artifact_id"],
             )
             for slot_index, (slot, role) in enumerate(
-                zip(raw_slots, roles, strict=True)
+                zip(raw_slots, roles)
             )
         ]
         for slot_index, slot in enumerate(slots):
@@ -1450,7 +1450,7 @@ def validate_draft(
                 preregistration_id=sidecar["artifact_id"],
             )
             for slot_index, (slot, role) in enumerate(
-                zip(raw_slots, roles, strict=True)
+                zip(raw_slots, roles)
             )
         ]
         for slot_index, slot in enumerate(slots):

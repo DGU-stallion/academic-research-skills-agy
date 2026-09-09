@@ -746,7 +746,7 @@ def _validate_call_plan_binding(
     subject_calls = [call for call in calls if call["role"] == "subject"]
     if len(subject_calls) != len(expected_subjects):
         raise ContractError("subject-call plan does not exactly cover item x arm x replicate")
-    for call, expected in zip(subject_calls, expected_subjects, strict=True):
+    for call, expected in zip(subject_calls, expected_subjects):
         item_replicate_id = expected["item_replicate_id"]
         expected_call_id = f"subject.{item_replicate_id}"
         if (
@@ -784,7 +784,7 @@ def _validate_call_plan_binding(
     required_blinding = ["arm_identity", "control_status", "mechanism_state"]
     if any(judge.get("blinded_to") != required_blinding for judge in judge_rows):
         raise ContractError("future #679 judges must use the frozen blinding dimensions")
-    for plan_judge, row_judge in zip(plan_judges, judge_rows, strict=True):
+    for plan_judge, row_judge in zip(plan_judges, judge_rows):
         if any(
             row_judge.get(key) != plan_judge[key]
             for key in ("judge_id", "model_id", "model_family", "blinded_to")
@@ -820,7 +820,7 @@ def _validate_call_plan_binding(
     judge_calls = [call for call in calls if call["role"] == "judge"]
     if len(judge_calls) != len(expected_judges):
         raise ContractError("subject-call plan does not exactly cover judge x item-replicate")
-    for call, expected in zip(judge_calls, expected_judges, strict=True):
+    for call, expected in zip(judge_calls, expected_judges):
         if call["call_id"] != expected["call_id"] or any(
             call[key] != expected[key]
             for key in (
@@ -993,7 +993,7 @@ def _check_manifest_binding(
     subject_starts: list[dt.datetime] = []
     subject_completions: list[dt.datetime] = []
     judge_starts: list[dt.datetime] = []
-    for index, (call, planned) in enumerate(zip(calls, planned_calls, strict=True)):
+    for index, (call, planned) in enumerate(zip(calls, planned_calls)):
         planned_prompt_path = _safe_file(
             root,
             planned["prompt"]["ref"],

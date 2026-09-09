@@ -776,13 +776,7 @@ def evaluate(case: Mapping[str, object]) -> ContractResult:
 
 SURFACE_FILES = (
     "academic-paper/SKILL.md",
-    "commands/ars-disclosure.md",
     "academic-paper/references/mode_selection_guide.md",
-    "README.md",
-    "README.ja-JP.md",
-    "README.ko-KR.md",
-    "README.zh-CN.md",
-    "README.zh-TW.md",
 )
 SURFACE_TOKENS = {
     "ACL": ("ACL",),

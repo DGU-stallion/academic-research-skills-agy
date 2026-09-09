@@ -17,7 +17,10 @@ import hashlib
 import json
 import os
 import sys
-import tomllib
+try:
+    import tomllib
+except ImportError:
+    import tomli as tomllib
 from pathlib import Path
 from typing import Any
 
@@ -1511,7 +1514,7 @@ def _json_values_equal(actual: Any, expected: Any) -> bool:
     if isinstance(actual, list):
         return len(actual) == len(expected) and all(
             _json_values_equal(left, right)
-            for left, right in zip(actual, expected, strict=True)
+            for left, right in zip(actual, expected)
         )
     return bool(actual == expected)
 

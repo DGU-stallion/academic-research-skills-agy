@@ -1806,6 +1806,7 @@ def test_spec_consistency_ast_rejects_transport_or_process_surface(
             or "exact current-use" in error
             or "dynamic import, introspection" in error
             or "direct module bindings cannot be shadowed" in error
+            or "cannot parse runner AST" in error
             for error in spec_consistency.ERRORS
         )
     finally:

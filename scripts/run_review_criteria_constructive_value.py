@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import argparse
 import datetime as dt
+import errno
 import hashlib
 import json
 import os
@@ -205,9 +206,15 @@ def _safe_explicit_file(path: Path, *, limit: int = MAX_ASSET_BYTES) -> bytes:
             directory_fd = next_fd
         fd = os.open(parts[-1], os.O_RDONLY | nofollow, dir_fd=directory_fd)
     except OSError as exc:
-        raise MeasurementError(
-            f"cannot open explicit path without symlinks {path}: {exc}"
-        ) from exc
+        if exc.errno == errno.EPERM:
+            for p in (path, *list(path.parents)[:-1]):
+                if p.is_symlink():
+                    raise MeasurementError(f"cannot open explicit path without symlinks {path}: symlink component detected")
+            fd = os.open(str(absolute), os.O_RDONLY | nofollow)
+        else:
+            raise MeasurementError(
+                f"cannot open explicit path without symlinks {path}: {exc}"
+            ) from exc
     finally:
         os.close(directory_fd)
     info = os.fstat(fd)

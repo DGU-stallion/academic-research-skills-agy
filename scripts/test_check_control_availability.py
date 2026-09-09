@@ -29,7 +29,6 @@ _MIRRORED_FILES = (
     "docs/ARCHITECTURE.md",
     "README.md",
     "audits/iso42001-spirit-gap-assessment-2026-08-17.md",
-    "pi/README.md",
     "shared/cross_model_verification.md",
     "shared/contracts/degradation_registry.json",
 )
@@ -67,8 +66,8 @@ def test_ca1_dead_file_link_fires(repo: Path) -> None:
     _mutate(
         repo,
         "docs/CONTROL_AVAILABILITY.md",
-        "../pi/README.md",
-        "../pi/NO_SUCH_FILE.md",
+        "../shared/contracts/degradation_registry.json",
+        "../shared/contracts/NO_SUCH_FILE.json",
     )
     errors = run_all_checks(repo)
     assert any("CA-1" in e and "does not exist" in e for e in errors)
@@ -81,8 +80,8 @@ def test_ca1_renamed_setup_heading_fires(repo: Path) -> None:
     _mutate(
         repo,
         str(SETUP_RELPATH),
-        "### Method 5: Claude Science import (v3.14.0+)",
-        "### Method 5: Claude Science import (v9.99.0+)",
+        "### Method 1: Antigravity Native Plugin Mode (Recommended)",
+        "### Method 1: Antigravity Native Plugin Mode (Renamed)",
     )
     errors = run_all_checks(repo)
     assert any("CA-1" in e and "anchor" in e for e in errors)
@@ -173,11 +172,11 @@ def test_ca2_same_slug_in_copied_file_does_not_satisfy(repo: Path) -> None:
     _mutate(
         repo,
         "docs/CONTROL_AVAILABILITY.md",
-        "SETUP.md#method-5-claude-science-import-v3140",
-        "SETUP_COPY.md#method-5-claude-science-import-v3140",
+        "SETUP.md#method-1-antigravity-native-plugin-mode-recommended",
+        "SETUP_COPY.md#method-1-antigravity-native-plugin-mode-recommended",
     )
     errors = run_all_checks(repo)
-    assert any("CA-2" in e and "Method 5" in e for e in errors)
+    assert any("CA-2" in e and "Method 1" in e for e in errors)
     assert not any("CA-1" in e for e in errors)
 
 

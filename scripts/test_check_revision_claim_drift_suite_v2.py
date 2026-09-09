@@ -640,7 +640,7 @@ def _future_bundle(
     ]
     manifest_calls = []
     for planned, prompt_hash, output_hash, (started, completed) in zip(
-        planned_calls, prompt_hashes, output_hashes, timings, strict=True
+        planned_calls, prompt_hashes, output_hashes, timings
     ):
         manifest_calls.append(
             {

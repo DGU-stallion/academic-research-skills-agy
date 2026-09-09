@@ -297,7 +297,7 @@ stop-power is the maintainer acting on the failure).
 
 One GitHub Actions subtlety the Trigger column accounts for: an unfiltered or
 paths-only `push:` trigger ALSO matches tag pushes — GitHub does not evaluate `paths`
-filters for tags — so `spec-consistency`, `command-invariants`, and `freshness-check`
+filters for tags — so `spec-consistency` and `freshness-check`
 additionally run on every `v*` tag push, where their failures are post-push detection
 exactly like the three tag-only workflows.
 
@@ -305,7 +305,6 @@ exactly like the three tag-only workflows.
 |---|---|---|---|---|
 | `spec-consistency.yml` | push (all branches **and tags**) + PR | the full lint/pytest battery: spec surfaces, contracts, content locks, the pytest manifest | Blocking | none |
 | `pytest.yml` | PR + push to main, both path-filtered (scripts/tests/contracts/config, adapter references, `bibliography_agent`) | adapter + script test suite | Blocking | none |
-| `command-invariants.yml` | push (path-filtered for branch pushes; **also every tag push**) + PR (all) | SessionStart announce list matches the command inventory; plugin-version ↔ CHANGELOG lockstep; command frontmatter `name` validation | Blocking | none |
 | `repository-hygiene.yml` | PR targeting main + push to main | gitleaks secret scan | Blocking | none |
 | `eval-harness.yml` | PR + push to main, both path-filtered (scoring/generation surfaces + gold sets) | eval gold-set thresholds (aggregate + per-class) | Blocking on `pull_request` events only; report-only on push | `[eval-regression-acknowledged]` in the PR body + ≥1 open tracking-issue URL in this repo |
 | `test-count-monotonic.yml` | PR targeting main | collected test count must not drop | Blocking | `[skip-test-count]` in the PR body (justification requested, not machine-validated) |
@@ -318,7 +317,7 @@ exactly like the three tag-only workflows.
 | `release-cooldown.yml` | tag push `v*` | paces consecutive release tags | Post-push detection | `[skip-cooldown]` in the commit/tag message |
 | `tag-version-match.yml` | tag push `v*` | re-runs the full version-consistency lint at the tag | Post-push detection | none |
 
-Count, honestly stated: **14 workflows — 8 blocking on at least one event class, 2
+Count, honestly stated: **13 workflows — 7 blocking on at least one event class, 2
 advisory, 1 administrative, 3 post-push detection.**
 
 Inventory sync, the count line, and the bypass tokens are pinned by

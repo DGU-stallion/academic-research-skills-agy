@@ -1,6 +1,6 @@
 ---
 name: deep-research
-description: "Universal deep research agent team. 13-agent pipeline for rigorous academic research on any topic. 8 modes: full research, quick brief, paper review, lit-review, fact-check, three-way literature scan, Socratic guided research dialogue, and systematic review with optional meta-analysis. Covers research question formulation, Socratic mentoring, methodology design, systematic literature search, source verification, cross-source synthesis, risk of bias assessment, meta-analysis, APA 7.0 report compilation, editorial review, devil's advocate challenges, ethics review, and post-research literature monitoring. Triggers on: research, deep research, literature review, systematic review, meta-analysis, PRISMA, evidence synthesis, fact-check, WHY HOW WHAT papers, 3W literature scan, guide my research, help me think through, 研究, 深度研究, 文獻回顧, 文獻探討, 系統性回顧, 後設分析, 事實查核, 三段式文獻掃描, 引導我的研究, 幫我釐清, 幫我想想, 我不確定要研究什麼, 研究方向, 研究主題, 심층 연구, 문헌 조사, 체계적 문헌고찰, 메타분석, 사실 확인, 연구 방향을 잡아줘, 연구 주제 정하는 것을 도와줘."
+description: "Universal deep research agent team. 13-agent pipeline for rigorous academic research on any topic. 8 modes: full research, quick brief, paper review, lit-review, fact-check, three-way literature scan, Socratic guided research dialogue, and systematic review with optional meta-analysis. Covers research question formulation, Socratic mentoring, methodology design, systematic literature search, source verification, cross-source synthesis, risk of bias assessment, meta-analysis, APA 7.0 report compilation, editorial review, devil's advocate challenges, ethics review, and post-research literature monitoring. Triggers on: research, deep research, literature review, systematic review, meta-analysis, PRISMA, evidence synthesis, fact-check, WHY HOW WHAT papers, 3W literature scan, guide my research, help me think through, 研究, 深度研究, 文献综述, 文献探讨, 系统性回顾, 系统综述, 元分析, 事实核查, 三段式文献扫描, 引导我的研究, 帮我理清, 帮我想想, 我不确定要研究什么, 研究方向, 研究主题, 文獻回顧, 文獻探討, 系統性回顧, 後設分析, 事實查核, 三段式文獻掃描, 引導我的研究, 幫我釐清, 심층 연구, 문헌 조사, 체계적 문헌고찰, 메타분석, 사실 확인, 연구 방향을 잡아줘, 연구 주제 정하는 것을 도와줘."
 metadata:
   version: "2.12.1"
   last_updated: "2026-08-15"
@@ -20,20 +20,22 @@ Universal deep research tool — a domain-agnostic 13-agent team for rigorous ac
 - **Style Profile consumption** (optional) — If a Style Profile is available from academic-paper intake, the report compiler applies it as a soft guide for the Executive Summary and Synthesis sections. Discipline conventions and report objectivity take priority.
 - **Writing Quality Check** — The report compiler runs a writing quality checklist before finalizing: flags AI-typical overused terms, checks sentence/paragraph length variation, removes throat-clearing openers. See `academic-paper/references/writing_quality_check.md`.
 
-> **Routing discipline (v3.9.2):** see `.claude/CLAUDE.md` "Routing Discipline (v3.9.2)" + `shared/references/intent_clarification_protocol.md` for cross-skill routing rules. This skill assumes routing has already settled — ambiguous cross-phase materials should have been clarified upstream.
+> **Routing discipline:** see `GEMINI.md` § "模式分发与触发映射表" + `shared/references/intent_clarification_protocol.md` for cross-skill routing rules. This skill assumes routing has already settled — ambiguous cross-phase materials should have been clarified upstream.
 
 ## Quick Start
 
 **Minimal command:**
 ```
 Research the impact of AI on higher education quality assurance
+做关于生成式人工智能对高等教育质量保障影响的深度文献综述
 ```
 
 **Socratic mode:**
 ```
 Guide my research on the impact of declining birth rates on private universities
 引導我的研究：少子化對私立大學的影響
-幫我釐清我的研究方向，我對高教品保有興趣但還不太確定
+引导我的研究：少子化对民办高校管理策略的影响
+帮我理清我的研究方向，我对高教质保领域有兴趣但还不确定具体选题
 ```
 
 **Execution:**
@@ -51,6 +53,8 @@ Guide my research on the impact of declining birth rates on private universities
 ### Trigger Keywords
 
 **English**: research, deep research, literature review, systematic review, meta-analysis, PRISMA, evidence synthesis, fact-check, methodology, APA report, academic analysis, policy analysis, WHY HOW WHAT papers, 3W literature scan, guide my research, help me think through, monitor this topic, set up alerts
+
+**简体中文**: 研究, 深度研究, 文献综述, 文献探讨, 系统性回顾, 系统综述, 元分析, 证据综合, 事实核查, 三段式文献扫描, WHY HOW WHAT 论文比较, 研究方法, 学术分析, 政策分析, 引导我的研究, 帮我理清, 帮我想想, 我不确定要研究什么, 监测这个主题, 设定追踪
 
 **繁體中文**: 研究, 深度研究, 文獻回顧, 文獻探討, 系統性回顧, 後設分析, 證據綜整, 事實查核, 三段式文獻掃描, WHY HOW WHAT 論文比較, 研究方法, 學術分析, 政策分析, 引導我的研究, 幫我釐清, 監測這個主題, 設定追蹤
 
@@ -174,12 +178,19 @@ User: "Research [topic]"
      |
      ** User confirmation before Phase 2 **
      |
-=== Phase 2: INVESTIGATION ===
+=== Phase 2: INVESTIGATION (Scientific Tools Auto-Discovery) ===
+     |
+     ** Scientific Tools Auto-Discovery Protocol **:
+     The agent automatically checks available tools and prioritizes scholarly plugins:
+     - `literature-search-openalex`: Global scholarly graph, metadata resolution, and verified DOI lookups
+     - `literature-search-arxiv`: CS, AI, mathematics, and physics preprint discovery
+     - `pubmed-database` / `literature-search-europepmc`: Biomedical, clinical, and life science literature
+     - `search_web`: Graceful fallback only when domain scholarly plugins are not loaded
      |
      |-> [bibliography_agent] -> Source Corpus + Annotated Bibliography
      |   - Systematic search strategy (databases, keywords, Boolean)
      |   - Inclusion/exclusion criteria
-     |   - PRISMA-style flow (if applicable)
+     |   - PRISMA-style flow (Mermaid diagram + optional Generative UI interactive funnel)
      |   - Annotated bibliography (APA 7.0)
      |
      +-> [source_verification_agent] -> Verified & Graded Sources
@@ -187,7 +198,7 @@ User: "Research [topic]"
          - Predatory journal screening
          - Conflict-of-interest flagging
          - Currency assessment (publication date relevance)
-         - Source quality matrix
+         - Source quality matrix (Markdown table + optional Generative UI interactive dashboard)
      |
 === Phase 3: ANALYSIS ===
      |
@@ -276,7 +287,7 @@ ARS pipeline runs in 6 phases. Two invocation modes:
 
 In Mode B, **single-phase agents (Bucket A per `docs/design/2026-05-18-ars-v3.9.2-agent-phase-classification.md`) stay strictly within their assigned phase for writes**. Reads from upstream phases are allowed. Multi-phase agents (Bucket B: `devils_advocate_agent`, `report_compiler_agent`) do exactly the work specified by the caller's invocation for that phase — no extension to other phases in the same call.
 
-Routing into Mode B requires explicit user signal — `/ars-<mode>` slash command or `[direct-mode]` prefix. Ambiguous cross-phase input defaults to clarification per `.claude/CLAUDE.md` Routing Discipline + `shared/references/intent_clarification_protocol.md`.
+Routing into Mode B supports explicit user intent (natural language mode phrasing, history aliases like `ars-3w`, or `[direct-mode]` prefix). Ambiguous cross-phase input defaults to clarification per `GEMINI.md` Routing Discipline + `shared/references/intent_clarification_protocol.md`.
 
 **Enforcement (v3.9.2):** Phase Boundary blocks on Bucket A agents + advisory verifier (`scripts/check_pipeline_integrity.py`) + a deterministic PreToolUse write-scope guard in hook-enabled runtimes (#134 rescope, PR #294). Multi-phase envelope remains forward-scope (#134 Slices 3-5).
 

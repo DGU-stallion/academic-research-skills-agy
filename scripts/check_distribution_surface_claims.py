@@ -169,8 +169,14 @@ def _check_description(surface: str, value, errors: list[str]) -> None:
 def run(root: Path) -> list[str]:
     errors: list[str] = []
     plugin_dir = root / ".claude-plugin"
+    if plugin_dir.exists():
+        plugin_path = plugin_dir / "plugin.json"
+        marketplace_path = plugin_dir / "marketplace.json"
+    else:
+        plugin_path = root / "plugin.json"
+        marketplace_path = None
 
-    plugin = _load_manifest(plugin_dir / "plugin.json", errors)
+    plugin = _load_manifest(plugin_path, errors)
     if plugin is not None:
         description = plugin.get("description")
         _check_description("plugin.json", description, errors)
@@ -184,27 +190,28 @@ def run(root: Path) -> list[str]:
                 "the advertised number from the tree (#414); see #753"
             )
 
-    marketplace = _load_manifest(plugin_dir / "marketplace.json", errors)
-    if marketplace is not None:
-        _check_description(
-            "marketplace.json", marketplace.get("description"), errors
-        )
-        plugins = marketplace.get("plugins")
-        if not isinstance(plugins, list) or not plugins:
-            errors.append("D2: marketplace.json plugins[] is missing or "
-                          "empty — the per-plugin description surface cannot "
-                          "silently leave this lint's coverage")
-        else:
-            for i, entry in enumerate(plugins):
-                if not isinstance(entry, dict):
-                    errors.append(f"D2: marketplace.json plugins[{i}] is "
-                                  f"not an object")
-                    continue
-                _check_description(
-                    f"marketplace.json plugins[{i}]",
-                    entry.get("description"),
-                    errors,
-                )
+    if marketplace_path is not None:
+        marketplace = _load_manifest(marketplace_path, errors)
+        if marketplace is not None:
+            _check_description(
+                "marketplace.json", marketplace.get("description"), errors
+            )
+            plugins = marketplace.get("plugins")
+            if not isinstance(plugins, list) or not plugins:
+                errors.append("D2: marketplace.json plugins[] is missing or "
+                              "empty — the per-plugin description surface cannot "
+                              "silently leave this lint's coverage")
+            else:
+                for i, entry in enumerate(plugins):
+                    if not isinstance(entry, dict):
+                        errors.append(f"D2: marketplace.json plugins[{i}] is "
+                                      f"not an object")
+                        continue
+                    _check_description(
+                        f"marketplace.json plugins[{i}]",
+                        entry.get("description"),
+                        errors,
+                    )
     return errors
 
 

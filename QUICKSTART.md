@@ -1,82 +1,104 @@
-# Quick Start
+# Quick Start Guide: Academic Research Skills for Antigravity (ARS-agy)
 
-Get from zero to your first AI-assisted research in 3 steps.
+Get from zero to your first AI-assisted research in 3 simple steps on Google Antigravity.
 
-## Step 1: Install
+---
 
-```bash
-# Install Claude Code
-curl -fsSL https://claude.ai/install.sh | bash
+## Step 1: Install Plugin / Skills in Antigravity
 
-# Clone this repo somewhere stable
-git clone https://github.com/Imbad0202/academic-research-skills.git ~/academic-research-skills
+Choose one of the following installation methods:
 
-# Install each of the four skills into your project's .claude/skills/
-cd /path/to/your/project
-mkdir -p .claude/skills
-ln -s ~/academic-research-skills/deep-research .claude/skills/deep-research
-ln -s ~/academic-research-skills/academic-paper .claude/skills/academic-paper
-ln -s ~/academic-research-skills/academic-paper-reviewer .claude/skills/academic-paper-reviewer
-ln -s ~/academic-research-skills/academic-pipeline .claude/skills/academic-pipeline
-```
-
-Each skill must sit at `.claude/skills/<skill-name>/SKILL.md` for Claude Code to discover it. See [docs/SETUP.md](docs/SETUP.md) for the copy-based alternative, global `~/.claude/skills/` install, and the other installation methods (Claude Code plugin, Cowork via zip upload, claude.ai). Note that Cowork and claude.ai do not read `~/.claude/skills/` — they install skills through their own settings upload, not this path.
-
-## Step 2: Launch
+### Option A: Antigravity Native Plugin Mode (Recommended)
+Install as a complete Antigravity plugin with rules and skills automatically managed:
 
 ```bash
-claude
+# Global plugin (recommended across all projects)
+mkdir -p ~/.gemini/config/plugins
+git clone https://github.com/DGU-stallion/academic-research-skills-agy.git ~/.gemini/config/plugins/academic-research-skills-agy
 ```
 
-## Step 3: Start researching
+### Option B: Workspace Skills Mode (Per-project)
+Add ARS-agy to your current research project folder:
 
-Tell Claude what you want to do. It will automatically pick the right skill and mode.
-
-### Example: Guided research (Socratic mode)
-
-```
-You: "I have a vague idea about AI's impact on higher education quality assurance,
-      but I'm not sure how to frame the research question. Can you guide me?"
+```bash
+cd /path/to/your/research-project
+mkdir -p skills
+git clone https://github.com/DGU-stallion/academic-research-skills-agy.git skills/academic-research-skills-agy
 ```
 
-Claude will enter Socratic mode — asking questions to help you clarify your thinking, not giving you answers directly. After 5-15 rounds of dialogue, you'll have a focused research question and methodology direction.
+### Option C: Global Skills Mode (Symlink)
+Install globally via symlink:
 
-### Example: Write a paper
-
-```
-You: "Help me write a paper about the impact of declining birth rates
-      on private universities in Taiwan"
-```
-
-### Example: Review an existing paper
-
-```
-You: "Review this paper" (then paste or attach the paper)
+```bash
+git clone https://github.com/DGU-stallion/academic-research-skills-agy.git ~/skills/academic-research-skills-agy
+mkdir -p ~/.gemini/antigravity/skills
+ln -s ~/skills/academic-research-skills-agy/deep-research ~/.gemini/antigravity/skills/deep-research
+ln -s ~/skills/academic-research-skills-agy/academic-paper ~/.gemini/antigravity/skills/academic-paper
+ln -s ~/skills/academic-research-skills-agy/academic-paper-reviewer ~/.gemini/antigravity/skills/academic-paper-reviewer
+ln -s ~/skills/academic-research-skills-agy/academic-pipeline ~/.gemini/antigravity/skills/academic-pipeline
 ```
 
-### Example: Full pipeline (research → write → review → revise → publish)
+---
 
+## Step 2: Open Antigravity
+
+Open your research project workspace in Antigravity (via Antigravity IDE, CLI, or web interface). Antigravity automatically detects the plugin or skills.
+
+---
+
+## Step 3: Start Researching
+
+Simply express what you need in natural language (English or Chinese). Antigravity will automatically route to the right skill and mode.
+
+### Example 1: Socratic Guided Inquiry (Brainstorming & RQ Definition)
+
+```text
+You: "I have a broad idea about evaluating code generation consistency across LLM architectures, but I am not sure how to frame the research question. Can you guide me?"
 ```
-You: "I want to produce a complete research paper about how agentic AI
-      is reshaping student learning outcome measurement"
+> Antigravity activates `deep-research` (socratic mode), guiding you through critical questions to narrow down variables, hypotheses, and scope.
+
+### Example 2: Plan a Paper Chapter-by-Chapter
+
+```text
+You: "Help me outline and plan a research paper investigating reinforcement learning from human feedback in robotics."
 ```
+> Antigravity activates `academic-paper` (plan / outline mode), mapping claims to supporting evidence.
 
-This triggers the full 10-stage pipeline. Budget ~$4-6 in API costs and 2-4 hours of collaborative work.
+### Example 3: Multi-Perspective Blind Peer Review
 
-## Which mode should I use?
+```text
+You: "Review this draft paper [attached document] as an academic reviewer team. Focus on methodology rigor and potential counterarguments."
+```
+> Antigravity activates `academic-paper-reviewer`, delegating to independent reviewer subagents and an isolated Devil's Advocate.
 
-| I want to... | Use this |
-|-------------|----------|
-| Explore a vague idea | `deep-research` socratic mode — just describe your interest |
-| Get a quick literature summary | `deep-research` quick mode |
-| Do a systematic review (PRISMA) | `deep-research` systematic-review mode |
-| Write a paper from scratch | `academic-paper` full mode |
-| Plan a paper chapter by chapter | `academic-paper` plan mode |
-| Get my paper reviewed | `academic-paper-reviewer` full mode |
-| Do everything end-to-end | `academic-pipeline` — say "I want a complete research paper" |
+### Example 4: Full End-to-End Pipeline
 
-## What's next?
+```text
+You: "I want to conduct an end-to-end research project on multi-agent consensus protocols, from literature search to publication draft."
+```
+> Antigravity activates `academic-pipeline`, orchestrating the 10-stage process with interactive `ask_question` decision cards at each gate.
 
-- [Full README](README.md) — all features, modes, installation options, and changelog
-- [中文版](README.zh-TW.md) — Traditional Chinese version
-- [Pipeline showcase](examples/showcase/) — real artifacts from a complete pipeline run
+---
+
+## Which Mode Should I Use?
+
+| I want to... | Skill & Mode | Natural Prompt / Alias |
+| :--- | :--- | :--- |
+| Clarify or refine a vague idea | `deep-research` (socratic) | "Guide my research questions" / `socratic` |
+| Fast literature overview | `deep-research` (quick) | "Literature overview on [topic]" |
+| PRISMA systematic review | `deep-research` (systematic-review) | "Conduct systematic review on [topic]" |
+| 3-way literature comparison | `deep-research` (three-way-scan) | "Compare these papers" / `ars-3w` |
+| Draft a complete paper | `academic-paper` (full) | "Help me write a research paper" |
+| Create structured outline & claim map | `academic-paper` (outline) | "Outline this paper" / `ars-outline` |
+| Generate bilingual abstract | `academic-paper` (abstract) | "Generate bilingual abstract" / `ars-abstract` |
+| Address reviewer comments | `academic-paper` (revision) | "Revise paper based on review comments" / `ars-revision` |
+| Independent blind peer review | `academic-paper-reviewer` (full) | "Review this paper" / `ars-reviewer` |
+| Complete 10-stage research pipeline | `academic-pipeline` (orchestrator) | "End-to-end research pipeline" / `ars-full` |
+
+---
+
+## What's Next?
+
+- [Full Readme (Simplified Chinese)](README.zh-CN.md)
+- [Full Readme (English)](README.md)
+- [Upstream Repository](https://github.com/Imbad0202/academic-research-skills)

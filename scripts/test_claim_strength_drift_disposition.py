@@ -3,6 +3,7 @@ from __future__ import annotations
 import copy
 import hashlib
 import json
+import os
 import subprocess
 import sys
 from pathlib import Path
@@ -476,7 +477,7 @@ def test_build_loader_rejects_missing_symlink_and_duplicate_files(
         runtime._load_build_event_artifacts(author_input)
 
     hardlink = tmp_path / "event-hardlink-validate.raw"
-    hardlink.hardlink_to(event_path)
+    os.link(event_path, hardlink)
     author_input = _author_input(
         ["restore", "restore"], event_paths=[event_path, hardlink]
     )
@@ -484,7 +485,7 @@ def test_build_loader_rejects_missing_symlink_and_duplicate_files(
         runtime._load_build_event_artifacts(author_input)
 
     hardlink = tmp_path / "event-hardlink.raw"
-    hardlink.hardlink_to(event_path)
+    os.link(event_path, hardlink)
     with pytest.raises(runtime.ContractError, match="duplicate file mapping"):
         runtime._parse_validate_event_artifacts(
             [

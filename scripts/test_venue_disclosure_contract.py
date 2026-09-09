@@ -190,7 +190,6 @@ def _copy_contract_tree(tmp_path: Path) -> Path:
         POLICIES,
         PROTOCOL,
         "academic-paper/SKILL.md",
-        "commands/ars-disclosure.md",
         "academic-paper/references/mode_selection_guide.md",
         "README.md",
         "README.ja-JP.md",
@@ -267,11 +266,11 @@ def test_selector_surface_drift_is_detected(tmp_path: Path) -> None:
     tree = _copy_contract_tree(tmp_path)
     _mutate(
         tree,
-        "commands/ars-disclosure.md",
-        " / journal-level 国际眼科杂志",
+        "academic-paper/references/mode_selection_guide.md",
+        "journal-level 国际眼科杂志",
         "",
     )
-    assert any("ars-disclosure.md" in error for error in surface_sync_errors(tree))
+    assert any("mode_selection_guide.md" in error for error in surface_sync_errors(tree))
 
 
 # Intake, dispatch, halt, and four-outcome fixtures.

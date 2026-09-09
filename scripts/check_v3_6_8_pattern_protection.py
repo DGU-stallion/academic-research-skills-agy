@@ -157,6 +157,10 @@ def _detect_pr_base_ref() -> str | None:
     """
     env_base = os.environ.get("GITHUB_BASE_REF")
     if env_base:
+        for candidate in (f"origin/{env_base}", f"upstream/{env_base}", env_base):
+            rc, _, _ = _run_git(["rev-parse", "--verify", candidate])
+            if rc == 0:
+                return candidate
         return f"origin/{env_base}"
     default_branch, _ = _resolve_default_branch()
     if default_branch:

@@ -40,6 +40,10 @@ LAUNCHER = os.path.join(REPO_ROOT, "hooks", "run_guard.sh")
 GUARD = os.path.join(REPO_ROOT, "scripts", "ars_write_scope_guard.py")
 PASS_THROUGH = {"hookSpecificOutput": {"hookEventName": "PreToolUse"}}
 
+def setUpModule():
+    if not os.path.exists(LAUNCHER):
+        raise unittest.SkipTest("hooks/run_guard.sh not present in AGY port")
+
 # A real python to hand the launcher when a test needs the guard to actually run.
 REAL_PY = sys.executable
 

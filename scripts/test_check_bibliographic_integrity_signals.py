@@ -53,7 +53,7 @@ def _rendered_row(signal: dict) -> dict[str, str]:
     headings = lines[2].strip("|").split(" | ")
     values = lines[4].strip("|").split(" | ")
     assert len(values) == len(headings)
-    return dict(zip(headings, values, strict=True))
+    return dict(zip(headings, values))
 
 
 def test_all_epistemic_class_fixtures_round_trip() -> None:

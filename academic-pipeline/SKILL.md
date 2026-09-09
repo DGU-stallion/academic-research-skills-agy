@@ -1,6 +1,6 @@
 ---
 name: academic-pipeline
-description: "Orchestrator for the full academic research pipeline: research -> write -> integrity check -> review -> revise -> re-review -> re-revise -> final integrity check -> finalize. Coordinates deep-research, academic-paper, and academic-paper-reviewer into a seamless 10-stage workflow with mandatory, coverage-bounded integrity checks, two-stage peer review, and auditable quality-assurance artifacts. Triggers on: academic pipeline, research to paper, full paper workflow, paper pipeline, end-to-end paper, research-to-publication, complete paper workflow, 연구부터 논문까지, 연구 주제 설정부터 논문 완성까지, 논문 전체 워크플로."
+description: "Orchestrator for the full academic research pipeline: research -> write -> integrity check -> review -> revise -> re-review -> re-revise -> final integrity check -> finalize. Coordinates deep-research, academic-paper, and academic-paper-reviewer into a seamless 10-stage workflow with mandatory, coverage-bounded integrity checks, two-stage peer review, and auditable quality-assurance artifacts. Triggers on: academic pipeline, research to paper, full paper workflow, paper pipeline, end-to-end paper, research-to-publication, complete paper workflow, 学术流水线, 研究到论文, 完整论文流程, 论文全流程, 全流程论文, 端到端论文, 学术研究流水线, 从零开始写论文, 端到端写论文, 學術流水線, 研究到論文, 完整論文流程, 論文全流程, 全流程論文, 端到端論文, 學術研究流水線, 從零開始寫論文, 연구부터 논문까지, 연구 주제 설정부터 논문 완성까지, 논문 전체 워크플로."
 metadata:
   version: "3.21.1"
   last_updated: "2026-08-24"
@@ -18,7 +18,7 @@ metadata:
 
 A lightweight orchestrator that manages the complete academic pipeline from research exploration to final manuscript. It does not perform substantive work — it only detects stages, recommends modes, dispatches skills, manages transitions, and tracks state.
 
-> **Routing discipline (v3.9.2):** see `.claude/CLAUDE.md` "Routing Discipline (v3.9.2)" + `shared/references/intent_clarification_protocol.md` for cross-skill routing rules. This skill assumes routing has already settled — ambiguous cross-phase materials should have been clarified upstream.
+> **Routing discipline:** see `GEMINI.md` § "模式分发与触发映射表" + `shared/references/intent_clarification_protocol.md` for cross-skill routing rules. This skill assumes routing has already settled — ambiguous cross-phase materials should have been clarified upstream.
 
 **v3.6.3 (opt-in):** Set `ARS_PASSPORT_RESET=1` to promote FULL checkpoints to context-reset boundaries. Use `resume_from_passport=<hash>` in a fresh session to continue from the recorded stage. See [`references/passport_as_reset_boundary.md`](references/passport_as_reset_boundary.md).
 
@@ -37,18 +37,21 @@ A lightweight orchestrator that manages the complete academic pipeline from rese
 **Full workflow (from scratch):**
 ```
 I want to write a research paper on the impact of AI on higher education quality assurance
+我想全流程写一篇关于人工智能对高等教育质量保障影响的研究论文
 ```
 --> academic-pipeline launches, starting from Stage 1 (RESEARCH)
 
 **Mid-entry (existing paper):**
 ```
 I already have a paper, help me review it
+我手头已有一篇论文稿件，请帮我进入学术流水线做诚信核验与同行评审
 ```
 --> academic-pipeline detects mid-entry, starting from Stage 2.5 (INTEGRITY)
 
 **Revision mode (received reviewer feedback):**
 ```
 I received reviewer comments, help me revise
+我收到了审稿人意见，请协助我完成修改规划、逐条答辩与复审
 ```
 --> academic-pipeline detects, starting from Stage 4 (REVISE)
 
@@ -59,7 +62,7 @@ resume_from_passport=<hash> [stage=<n>] [mode=<m>]
 --> Loads the Material Passport (Schema 9), locates the `kind: boundary` entry matching `<hash>`, and confirms it has no later `kind: resume` entry consuming it. If `pending_decision` is set, the decision prompt fires first to capture the user's branch choice for the audit ledger; the prompt is never skipped, even when the user supplies `stage=`. After the prompt (or immediately if no `pending_decision`), the next stage is determined by: (a) `stage=<n>` CLI override if provided, else (b) the matched option's `next_stage`, else (c) the `next` field recorded in the boundary entry. CLI `stage=`/`mode=` overrides win over option routing.
 - **Gate (emit)**: `ARS_PASSPORT_RESET=1` must be set in the emitting session. Without the flag, no `kind: boundary` entries are written and there is nothing to resume from.
 - **Gate (resume)**: No flag required. Any session can invoke `resume_from_passport=<hash>` against a passport that carries a valid boundary entry matching the hash.
-- **Intent**: Invoke in a *fresh* Claude Code session. Resuming within the same session that emitted the boundary provides no token savings and may drop still-live in-session context.
+- **Intent**: Invoke in a *fresh* Antigravity session. Resuming within the same session that emitted the boundary provides no token savings and may drop still-live in-session context.
 - **Stage**: Any. Resumes at whatever stage the routing rules above determine.
 - **Reference**: [`references/passport_as_reset_boundary.md`](references/passport_as_reset_boundary.md) — see §"`resume_from_passport` mode contract".
 
@@ -77,6 +80,10 @@ resume_from_passport=<hash> [stage=<n>] [mode=<m>]
 ### Trigger Keywords
 
 **English**: academic pipeline, research to paper, full paper workflow, paper pipeline, end-to-end paper, research-to-publication, complete paper workflow
+
+**简体中文**: 学术流水线, 研究到论文, 完整论文流程, 论文全流程, 全流程论文, 端到端论文, 学术研究流水线, 学术全流程, 从零开始写论文, 端到端写论文, 论文写作流水线
+
+**繁體中文**: 學術流水線, 研究到論文, 完整論文流程, 論文全流程, 全流程論文, 端到端論文, 學術研究流水線, 從零開始寫論文
 
 **한국어**: 학술 파이프라인, 연구부터 논문까지, 논문 전체 워크플로, 연구 주제 설정부터 논문 완성까지, 연구-논문 전 과정
 
@@ -141,7 +148,12 @@ See `references/pipeline_state_machine.md` for complete state transition definit
 
 ## Adaptive Checkpoint System
 
-⚠️ **IRON RULE — Core rule: After each stage completion, the system must proactively prompt the user and wait for confirmation. The checkpoint presentation adapts based on context and user engagement.**
+⚠️ **IRON RULE — Core rule: After each stage completion, the system must proactively prompt the user and wait for confirmation via `ask_question` interactive cards. The checkpoint presentation adapts based on context and user engagement.**
+
+> [!IMPORTANT]
+> **Antigravity Interactive Checkpoints Protocol**: In Antigravity (AGY), all stage completion confirmations and branch choices MUST be rendered via the `ask_question` tool as structured multi-choice / single-choice interactive cards. Do NOT rely on CLI text prompts or auto-advance without blocking on the user's card submission.
+> 
+> **Language Adaptation**: Checkpoint interactive cards rendered via `ask_question` and the Decision Dashboard MUST adapt naturally to the user's conversational language (e.g. providing clear, professional Simplified Chinese questions and selectable options when interacting in Chinese), ensuring a seamless native user experience.
 
 ### Checkpoint Types
 
@@ -329,7 +341,7 @@ In Mode B, **single-phase agents (Bucket A per `docs/design/2026-05-18-ars-v3.9.
 - `collaboration_depth_agent` (C — FULL/SLIM checkpoints + Stage 6 record compilation, advisory-only)
 - `claim_ref_alignment_audit_agent` (C — opt-in claim audit, phase-orthogonal)
 
-Routing into Mode B requires explicit user signal — `/ars-<mode>` slash command or `[direct-mode]` prefix. Ambiguous cross-phase input defaults to clarification per `.claude/CLAUDE.md` Routing Discipline + `shared/references/intent_clarification_protocol.md`. **Critically:** if `pipeline_orchestrator_agent` is dispatched on ambiguous cross-phase materials, the orchestrator itself currently cannot reconcile (this is the v3.10 conductor #134 work) — v3.9.2 routes such cases to clarification BEFORE the orchestrator runs.
+Routing into Mode B supports explicit user intent (natural language mode phrasing, history aliases like `ars-full`, or `[direct-mode]` prefix). Ambiguous cross-phase input defaults to clarification per `GEMINI.md` Routing Discipline + `shared/references/intent_clarification_protocol.md`. **Critically:** if `pipeline_orchestrator_agent` is dispatched on ambiguous cross-phase materials, the orchestrator itself currently cannot reconcile (this is the v3.10 conductor #134 work) — v3.9.2 routes such cases to clarification BEFORE the orchestrator runs.
 
 **Enforcement (v3.9.2):** Phase Boundary blocks on downstream Bucket A agents + advisory verifier (`scripts/check_pipeline_integrity.py`) + a deterministic PreToolUse write-scope guard in hook-enabled runtimes (#134 rescope, PR #294). Multi-phase envelope + orchestrator structured intake remain forward-scope (#134 Slices 3-5).
 
@@ -692,7 +704,7 @@ Stage 5: academic-paper (format-convert mode)
   - Step 2: Produce MD, then generate DOCX via Pandoc when available (otherwise provide conversion instructions)
   - Step 3: Produce LaTeX (using corresponding document class, e.g., apa7 class for APA 7.0)
   - Step 4: After user confirms content is correct, tectonic compiles PDF (final version)
-  - Fonts: Times New Roman (English) + Source Han Serif TC VF (Chinese) + Courier New (monospace)
+  - Fonts: Times New Roman (English) + Source Han Serif SC / TC / Noto Serif CJK (Chinese) + Courier New (monospace)
   - ⚠️ IRON RULE: PDF must be compiled from LaTeX (HTML-to-PDF is prohibited)
 ```
 

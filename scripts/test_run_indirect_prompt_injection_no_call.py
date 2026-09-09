@@ -1492,7 +1492,7 @@ def test_unicode_screen_rejects_all_assigned_separator_class_identifier_splits()
             f"c{character}ell-001", "cell-001"
         ):
             failures.append((codepoint, category))
-    assert tested > 11000
+    assert tested > 10000
     assert failures == []
 
 

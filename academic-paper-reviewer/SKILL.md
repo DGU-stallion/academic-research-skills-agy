@@ -1,6 +1,6 @@
 ---
 name: academic-paper-reviewer
-description: "Multi-perspective academic paper review with dynamic reviewer personas. Runs a 5-seat, role-separated review panel (Journal-Fit Reviewer + 3 peer-review roles + Devil's Advocate) with field-specific expertise; role separation is not a claim of independent error processes. Supports full review, re-review (verification), quick assessment, methodology focus, Socratic guided, and calibration modes. Triggers on: review paper, peer review, manuscript review, referee report, review my paper, critique paper, simulate review, editorial review, calibrate reviewer, reviewer calibration, measure reviewer accuracy, 審查論文, 論文審查, 模擬審查, 同儕審查, 幫我審這篇, 以審查人角度評估, 審查者校準, 논문 심사, 동료 심사, 모의 심사, 심사자 관점에서 평가, 심사자 보정."
+description: "Multi-perspective academic paper review with dynamic reviewer personas. Runs a 5-seat, role-separated review panel (Journal-Fit Reviewer + 3 peer-review roles + Devil's Advocate) with field-specific expertise; role separation is not a claim of independent error processes. Supports full review, re-review (verification), quick assessment, methodology focus, Socratic guided, and calibration modes. Triggers on: review paper, peer review, manuscript review, referee report, review my paper, critique paper, simulate review, editorial review, calibrate reviewer, reviewer calibration, measure reviewer accuracy, 评审论文, 论文评审, 模拟审稿, 模拟评审, 同行评审, 帮我审这篇, 以审稿人角度评估, 审稿人校准, 独立盲审, 魔鬼代言人, 论文挑刺, 審查論文, 論文審查, 模擬審查, 同儕審查, 幫我審這篇, 以審查人角度評估, 審查者校準, 논문 심사, 동료 심사, 모의 심사, 심사자 관점에서 평가, 심사자 보정."
 metadata:
   version: "1.11.1"
   last_updated: "2026-08-15"
@@ -21,7 +21,7 @@ Simulates a complete international journal peer review process: automatically id
 2. Added `re-review` mode — verification review, focused on checking whether revisions address the review comments
 3. Expanded review team from 4 to 5 members
 
-> **Routing discipline (v3.9.2):** see `.claude/CLAUDE.md` "Routing Discipline (v3.9.2)" + `shared/references/intent_clarification_protocol.md` for cross-skill routing rules. This skill assumes routing has already settled — ambiguous cross-phase materials should have been clarified upstream.
+> **Routing discipline:** see `GEMINI.md` § "模式分发与触发映射表" + `shared/references/intent_clarification_protocol.md` for cross-skill routing rules. This skill assumes routing has already settled — ambiguous cross-phase materials should have been clarified upstream.
 
 ---
 
@@ -30,6 +30,8 @@ Simulates a complete international journal peer review process: automatically id
 **Simplest command:**
 ```
 Review this paper: [paste paper or provide file]
+请帮我模拟同行评审这篇论文：[粘贴论文或提供文件路径]
+以顶级期刊审稿人视角审查这篇稿件，重点挑出方法论漏洞与反面论据
 ```
 
 **Output:**
@@ -46,9 +48,11 @@ Review this paper: [paste paper or provide file]
 
 **English**: review paper, peer review, manuscript review, referee report, review my paper, critique paper, simulate review, editorial review, calibrate reviewer, reviewer calibration, measure reviewer accuracy
 
-**한국어**: 논문 심사, 동료 심사, 모의 심사, 원고 심사, 심사 보고서, 심사자 관점에서 평가, 심사자 보정, 심사 정확도 측정
+**简体中文**: 评审论文, 论文评审, 模拟审稿, 模拟评审, 同行评审, 帮我审这篇, 以审稿人角度评估, 审稿人校准, 审稿意见, 审稿报告, 论文挑刺, 独立盲审, 批判性审查
 
 **繁體中文**: 審查論文, 論文審查, 模擬審查, 同儕審查, 幫我審這篇, 以審查人角度評估, 審查者校準
+
+**한국어**: 논문 심사, 동료 심사, 모의 심사, 원고 심사, 심사 보고서, 심사자 관점에서 평가, 심사자 보정, 심사 정확도 측정
 
 ### Non-Trigger Scenarios
 
@@ -110,17 +114,29 @@ User: "Review this paper"
      |
      ** Presents Reviewer Configuration to user for confirmation (adjustable) **
      |
-=== Phase 1: PARALLEL MULTI-PERSPECTIVE REVIEW ===
+=== Phase 1: PARALLEL MULTI-PERSPECTIVE REVIEW (AGY Subagents Delegation) ===
+=== Phase 1: PANEL REVIEW (Antigravity Concurrent Subagents) ===
      |
-     |-> [eic_agent] -------> Journal-Fit Review Report
-     |   - Journal fit, originality, significance, relevance to readership
-     |   - Does not go deep into methodology (that's Reviewer 1's job)
-     |   - One role-separated card among five — no peer-output channel before commitment (Iron Rule #2)
+     ** Concurrent Dispatch Protocol (Single-Call invoke_subagent) **:
+     The orchestrator / lead agent dispatches all 5 reviewer seats simultaneously via a single `invoke_subagent` call:
+     - `@MethodologyReviewer`: Methodology review & statistical rigor
+     - `@DomainReviewer`: Domain literature completeness & theoretical rigor
+     - `@PerspectiveReviewer`: Cross-disciplinary impact & broader applications
+     - `@JournalFitReviewer`: Venue fit & submission readiness
+     - `@DevilsAdvocateReviewer`: Rigorous adversarial counter-arguments
+     * Each seat runs in an isolated subagent context (100% Anti-Sycophancy).
+     * Parallel execution reduces review turnaround time by over 60%.
      |
-     |-> [methodology_reviewer_agent] -> Methodology Review Report
-     |   - Research design rigor, sampling strategy, data collection
-     |   - Analysis method selection, statistical validity, effect sizes
-     |   - Reproducibility, data transparency
+     |-> [eic_agent] (Journal-Fit Reviewer) --> Journal-Fit Review Report
+     |   - Overall paper quality, writing, structure, figures/tables
+     |   - Venue fit assessment, Q1 criteria evaluation
+     |   - Core issues identification
+     |
+     |-> [methodology_reviewer_agent] ---> Methodology Review Report
+     |   - Research design rigor, sample size appropriateness
+     |   - Data collection methods, analytical tool validity
+     |   - Statistical analysis correctness, confounding variable control
+     |   - Reproducibility evaluation
      |
      |-> [domain_reviewer_agent] -------> Domain Review Report
      |   - Literature review completeness, theoretical framework appropriateness
@@ -142,19 +158,23 @@ User: "Review this paper"
          - Stakeholder blind spots
          - "So what?" test
      |
-=== Phase 2: EDITORIAL SYNTHESIS & DECISION ===
+=== Phase 2: EDITORIAL SYNTHESIS & DECISION (Markdown & Generative UI) ===
      |
      +-> [editorial_synthesizer_agent] -> Editorial Decision Package
          - Consolidates 5 reports (including Devil's Advocate challenges)
          - Identifies consensus (5 agree) vs. disagreement (divergent opinions)
          - Arbitration and argumentation for disputed issues
          - Devil's Advocate CRITICAL issues are specially flagged in the Editorial Decision
-         - Editorial Decision Letter
-         - Immutable non-ranking Revision Roadmap core (directly consumed with a separate explicit author sidecar)
+         - Editorial Decision Letter (Markdown report)
+         - Immutable non-ranking Revision Roadmap core
+         - Optional Generative UI Interactive Dashboard:
+           * 5-Seat Radar Scoring Board
+           * Dynamic filterable issue list (Critical / Major / Minor)
+           * Author remediation checklist
      |
 === Phase 2.5: REVISION COACHING (Socratic Revision Guidance) ===
      |
-     ** Only triggered when Decision = Minor/Major Revision **
+     ** Only triggered when Decision = Minor/Major Revision <!-- omitted --> **
      |
      +-> [eic_agent] guides the user through Socratic dialogue:
          1. Overall positioning — "After reading the review comments, what surprised you the most?"
@@ -233,7 +253,7 @@ The 1 Bucket D agent (`field_analyst` at Phase 0) is meta — it configures the 
 
 The v3.6.2 Sprint Contract Protocol (paper-blind Phase 1 + paper-visible Phase 2 + data delimiter) additionally constrains all reviewer agents' within-phase discipline. Phase Boundary (phase scope) and Sprint Contract (within-phase paper-blind/paper-visible discipline) both apply — neither overrides the other.
 
-Routing into Mode B requires explicit user signal — `/ars-<mode>` slash command or `[direct-mode]` prefix. Ambiguous cross-phase input defaults to clarification per `.claude/CLAUDE.md` Routing Discipline + `shared/references/intent_clarification_protocol.md`.
+Routing into Mode B supports explicit user intent (natural language mode phrasing, history aliases like `ars-reviewer`, or `[direct-mode]` prefix). Ambiguous cross-phase input defaults to clarification per `GEMINI.md` Routing Discipline + `shared/references/intent_clarification_protocol.md`.
 
 **Enforcement (v3.9.2):** Phase Boundary blocks on Bucket A agents + advisory verifier (`scripts/check_pipeline_integrity.py`) + a deterministic PreToolUse write-scope guard in hook-enabled runtimes (#134 rescope, PR #294). Multi-phase envelope remains forward-scope (#134 Slices 3-5).
 

@@ -893,8 +893,8 @@ def test_upstream_week_date_residue_cannot_escape_the_667_date_contract() -> Non
     context = _context()
     registry = _registry()
     registry["as_of"] = "2026-W52-7"
-    resolved = resolve(context, registry)
     with pytest.raises(ContractError, match="real ISO 8601 date"):
+        resolved = resolve(context, registry)
         _build(_inventory(), PACKET_ROOT, context, registry, resolved)
 
 

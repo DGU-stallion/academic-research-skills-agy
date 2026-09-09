@@ -4,6 +4,7 @@ Fake transport only — no external API, no manuscript upload. These fixtures
 pin the normative grammar in scripts/cross_model_handoff.py: recognition,
 fail-closed validation, blindness, and the complete outcome routing.
 """
+from __future__ import annotations
 import json
 import unittest
 

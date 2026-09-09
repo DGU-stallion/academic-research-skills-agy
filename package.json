@@ -1,24 +1,15 @@
 {
-  "name": "academic-research-skills",
+  "name": "academic-research-skills-agy",
+  "version": "3.21.1-agy",
   "private": true,
-  "description": "Academic research workflow skills with Claude Code and Pi adapters",
+  "description": "Comprehensive academic research, manuscript drafting, peer review, and integrity verification copilot for Antigravity (AGY).",
   "keywords": [
-    "pi-package",
-    "academic-research"
+    "antigravity",
+    "agy",
+    "academic-research",
+    "peer-review",
+    "deep-research",
+    "academic-paper"
   ],
-  "license": "CC-BY-NC-4.0",
-  "pi": {
-    "extensions": [
-      "./pi/wrapper.js"
-    ],
-    "skills": [
-      "./deep-research",
-      "./academic-paper",
-      "./academic-paper-reviewer",
-      "./academic-pipeline"
-    ],
-    "prompts": [
-      "./commands"
-    ]
-  }
+  "license": "CC-BY-NC-4.0"
 }

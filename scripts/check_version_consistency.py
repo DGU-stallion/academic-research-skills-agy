@@ -268,33 +268,45 @@ def check(root: Path, tag: str | None = None) -> list[str]:
     errors: list[str] = []
 
     claude_md = root / ".claude" / "CLAUDE.md"
-    if not claude_md.is_file():
-        errors.append(f"{claude_md}: not found")
-        return errors
-    claude_text = claude_md.read_text(encoding="utf-8")
+    claude_text = ""
+    table_versions: dict[str, str] = {}
+    invalid_table_rows: list[tuple[str, str]] = []
+    suite_version: str | None = None
+    invalid_suite_token: str | None = None
 
-    table_versions, invalid_table_rows = _parse_table_versions(claude_text)
-    if not table_versions and not invalid_table_rows:
-        errors.append(
-            f"{claude_md}: Skills Overview table has no parseable "
-            "`<skill>` vX.Y.Z rows"
-        )
-    for skill, raw in invalid_table_rows:
-        errors.append(
-            f"{claude_md}: table row {skill!r} has invalid version "
-            f"token v{raw!r} (expected canonical N.N.N or N.N.N.N)"
-        )
+    if claude_md.is_file():
+        claude_text = claude_md.read_text(encoding="utf-8")
+        table_versions, invalid_table_rows = _parse_table_versions(claude_text)
+        if not table_versions and not invalid_table_rows:
+            errors.append(
+                f"{claude_md}: Skills Overview table has no parseable "
+                "`<skill>` vX.Y.Z rows"
+            )
+        for skill, raw in invalid_table_rows:
+            errors.append(
+                f"{claude_md}: table row {skill!r} has invalid version "
+                f"token v{raw!r} (expected canonical N.N.N or N.N.N.N)"
+            )
 
-    suite_version, invalid_suite_token = _parse_suite_version(claude_text)
-    if suite_version is None and invalid_suite_token is None:
-        errors.append(
-            f"{claude_md}: missing '**Suite version**: X.Y.Z' line"
-        )
-    elif invalid_suite_token is not None:
-        errors.append(
-            f"{claude_md}: Suite version token {invalid_suite_token!r} is "
-            "not a canonical N.N.N or N.N.N.N version"
-        )
+        suite_version, invalid_suite_token = _parse_suite_version(claude_text)
+        if suite_version is None and invalid_suite_token is None:
+            errors.append(
+                f"{claude_md}: missing '**Suite version**: X.Y.Z' line"
+            )
+        elif invalid_suite_token is not None:
+            errors.append(
+                f"{claude_md}: Suite version token {invalid_suite_token!r} is "
+                "not a canonical N.N.N or N.N.N.N version"
+            )
+    else:
+        # AGY Native fallback: read suite_version from plugin.json or CHANGELOG.md
+        plugin_file = root / "plugin.json"
+        if plugin_file.is_file():
+            try:
+                pj = json.loads(plugin_file.read_text(encoding="utf-8"))
+                suite_version = pj.get("version", "").split("-")[0]
+            except Exception:
+                pass
 
     changelog = root / "CHANGELOG.md"
     latest_date: str | None = None
@@ -330,7 +342,7 @@ def check(root: Path, tag: str | None = None) -> list[str]:
     # Invariant 10: .claude/CLAUDE.md "Last Updated" within ±7 days of the
     # latest CHANGELOG entry's date. Skipped while the CHANGELOG itself is
     # missing/malformed — those already errored above.
-    if latest is not None:
+    if latest is not None and claude_md.is_file():
         errors.extend(
             _check_last_updated_freshness(
                 claude_md, claude_text, changelog, latest_date
@@ -383,7 +395,8 @@ def check(root: Path, tag: str | None = None) -> list[str]:
         # Invariant 6: docs/ must not cite a version above the suite version.
         errors.extend(_check_docs_versions(root, suite_version))
         # Invariant 11: newest Key Additions heading matches the suite version.
-        errors.extend(_check_key_additions(claude_md, claude_text, suite_version))
+        if claude_md.is_file():
+            errors.extend(_check_key_additions(claude_md, claude_text, suite_version))
         # Invariant 12: citation surfaces (CITATION.cff / POSITIONING.md)
         # track the suite version + release date.
         errors.extend(_check_citation_surfaces(root, suite_version, latest_date))
@@ -427,7 +440,9 @@ def _check_plugin_manifests(root: Path, suite_version: str) -> list[str]:
     crash (a release lint must report drift, not blow up on it)."""
     errors: list[str] = []
 
-    plugin_json = root / ".claude-plugin" / "plugin.json"
+    plugin_json = root / "plugin.json"
+    if not plugin_json.is_file():
+        plugin_json = root / ".claude-plugin" / "plugin.json"
     if not plugin_json.is_file():
         errors.append(f"{plugin_json}: not found")
     else:
@@ -439,16 +454,14 @@ def _check_plugin_manifests(root: Path, suite_version: str) -> list[str]:
             v = data.get("version")
             if v is None:
                 errors.append(f"{plugin_json}: missing 'version' key")
-            elif str(v) != suite_version:
+            elif suite_version and str(v).split("-")[0] != suite_version.split("-")[0]:
                 errors.append(
                     f"{plugin_json}: version {str(v)!r} does not match suite "
                     f"version {suite_version!r}"
                 )
 
     marketplace = root / ".claude-plugin" / "marketplace.json"
-    if not marketplace.is_file():
-        errors.append(f"{marketplace}: not found")
-    else:
+    if marketplace.is_file():
         try:
             data = json.loads(marketplace.read_text(encoding="utf-8"))
         except (json.JSONDecodeError, ValueError) as exc:

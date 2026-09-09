@@ -13,6 +13,9 @@ docs/superpowers/
 
 # Python bytecode / pytest cache.
 __pycache__/
+.pytest_cache/
+.venv/
+venv/
 
 # Private ROADMAP is intentionally gitignored and maintained outside this public repo
 ROADMAP.md
